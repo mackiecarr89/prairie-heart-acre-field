@@ -4,14 +4,35 @@ import { ensureContrast, mustHex, toHex } from "@/lib/color";
 import { ROLE_IDS, type RoleId } from "@/lib/theme/catalog";
 import type { ThemeState } from "@/lib/theme/build";
 import { emptyOverrides } from "@/lib/theme/export";
-import { PRESETS, flipHex, rolesFromColors, shufflePalette } from "@/lib/theme/presets";
+import { PRESETS, flipHex, paletteFromSeed, rolesFromColors, shufflePalette } from "@/lib/theme/presets";
 import { isDark, type Appearance, type Style } from "@/lib/theme/types";
 
 const harbor = PRESETS[0]!;
+const DEFAULT_SEED = harbor.accent;
+
+function applyGenerated(
+  currentName: string,
+  rolled: ReturnType<typeof paletteFromSeed>,
+  seed?: string,
+): Partial<StudioState> {
+  return {
+    presetId: null,
+    ...(seed ? { seed } : {}),
+    name: currentName === harbor.name ? "Draft" : currentName,
+    bg: rolled.bg,
+    fg: rolled.fg,
+    accent: rolled.accent,
+    accent2: rolled.accent2,
+    roles: rolesFromColors(rolled.roles),
+    ...emptyOverrides(),
+  };
+}
 
 export type StudioState = ThemeState & {
   presetId: string | null;
+  seed: string;
   setName: (name: string) => void;
+  setSeed: (seed: string) => void;
   setAppearance: (appearance: Appearance) => void;
   setSurface: (key: "bg" | "fg" | "accent" | "accent2", value: string) => void;
   setRole: (id: RoleId, patch: Partial<Style>) => void;
@@ -26,6 +47,7 @@ export type StudioState = ThemeState & {
   pinKateColor: (id: string, value: string) => void;
   unpinKateColor: (id: string) => void;
   applyPreset: (id: string) => void;
+  generateFromSeed: () => void;
   shuffle: () => void;
   clearPins: () => void;
   liftWeak: () => void;
@@ -50,7 +72,9 @@ export const useStudio = create<StudioState>()(
   persist(
     (set, get) => ({
       ...baseFromPreset(),
+      seed: DEFAULT_SEED,
       setName: (name) => set({ name }),
+      setSeed: (seed) => set({ seed }),
       setAppearance: (appearance) => {
         const current = get();
         if (current.appearance === appearance) return;
@@ -127,20 +151,17 @@ export const useStudio = create<StudioState>()(
       applyPreset: (id) => {
         const preset = PRESETS.find((item) => item.id === id);
         if (!preset) return;
-        set(baseFromPreset(preset));
+        set({ ...baseFromPreset(preset), seed: preset.accent });
+      },
+      generateFromSeed: () => {
+        const current = get();
+        const rolled = paletteFromSeed(current.seed, current.appearance);
+        set(applyGenerated(current.name, rolled));
       },
       shuffle: () => {
-        const rolled = shufflePalette(get().appearance);
-        set({
-          presetId: null,
-          name: get().name === harbor.name ? "Draft" : get().name,
-          bg: rolled.bg,
-          fg: rolled.fg,
-          accent: rolled.accent,
-          accent2: rolled.accent2,
-          roles: rolesFromColors(rolled.roles),
-          ...emptyOverrides(),
-        });
+        const current = get();
+        const rolled = shufflePalette(current.appearance);
+        set(applyGenerated(current.name, rolled, rolled.accent));
       },
       clearPins: () => set(emptyOverrides()),
       liftWeak: () => {
@@ -165,6 +186,7 @@ export const useStudio = create<StudioState>()(
         name: state.name,
         appearance: state.appearance,
         presetId: state.presetId,
+        seed: state.seed,
         bg: state.bg,
         fg: state.fg,
         accent: state.accent,

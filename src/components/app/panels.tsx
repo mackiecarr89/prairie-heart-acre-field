@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { Copy, Download, RotateCcw, Search, Shuffle, Upload } from "lucide-react";
+import { Copy, Download, RotateCcw, Search, Shuffle, Upload, WandSparkles } from "lucide-react";
 import { VSCODE_COLORS } from "@/data/vscode-colors";
 import { contrast, mustHex } from "@/lib/color";
 import { KATE_EDITOR_COLORS, ROLE_GROUPS, ROLE_LABEL, type RoleId } from "@/lib/theme/catalog";
@@ -57,7 +57,19 @@ export function PalettePanel({ theme }: { theme: BuiltTheme }) {
           ))}
         </div>
       </div>
+      <div>
+        <p className="mb-2 text-xs tracking-wide text-muted uppercase">Seed color</p>
+        <HexField label="Seed color" value={state.seed} onChange={state.setSeed} />
+        <p className="mt-2 text-xs text-muted">The accent keeps this color. Everything else is spun from its hue.</p>
+      </div>
       <div className="flex flex-wrap gap-2">
+        <button
+          type="button"
+          onClick={() => state.generateFromSeed()}
+          className="inline-flex h-11 items-center gap-2 rounded-md bg-accent px-3 text-sm font-medium text-accent-ink"
+        >
+          <WandSparkles size={16} /> Generate palette
+        </button>
         <button type="button" onClick={() => state.shuffle()} className="inline-flex h-11 items-center gap-2 rounded-md border border-line px-3 text-sm">
           <Shuffle size={16} /> Shuffle
         </button>

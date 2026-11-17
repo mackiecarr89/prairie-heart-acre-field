@@ -271,29 +271,36 @@ export function rolesFromColors(colors: Record<RoleId, string>): Record<RoleId, 
   return out;
 }
 
-export function shufflePalette(appearance: Appearance): {
+export type GeneratedPalette = {
   bg: string;
   fg: string;
   accent: string;
   accent2: string;
   roles: Record<RoleId, string>;
-} {
+};
+
+/** Build surfaces and syntax roles from one seed color. Same seed and appearance always match. */
+export function paletteFromSeed(seed: string, appearance: Appearance): GeneratedPalette {
   const dark = isDark(appearance);
-  const hue = Math.random() * 360;
-  const bg = toHex(hsl((hue + 210) % 360, dark ? 14 : 18, dark ? 9 + Math.random() * 5 : 95));
+  const seedC = mustHex(seed);
+  const { h, s } = rgbToHsl(seedC);
+  const punch = Math.max(s, 0.22);
+  const bg = toHex(hsl((h + 200) % 360, dark ? 12 + punch * 8 : 8 + punch * 8, dark ? 10 : 96));
   const bgC = mustHex(bg);
-  const fg = toHex(ensureContrast(hsl((hue + 200) % 360, 12, dark ? 90 : 16), bgC, 7));
-  const accent = toHex(ensureContrast(hsl(hue, 70, dark ? 66 : 36), bgC, 3));
-  const accent2 = toHex(ensureContrast(hsl((hue + 42) % 360, 64, dark ? 68 : 40), bgC, 3));
-  const ink = (h: number, s: number, ld: number, ll: number, min = 4.5) =>
-    toHex(ensureContrast(hsl((hue + h) % 360, s, dark ? ld : ll), bgC, min));
+  const fg = toHex(ensureContrast(hsl((h + 200) % 360, 10, dark ? 92 : 14), bgC, 7));
+  const accent = toHex(ensureContrast({ ...seedC, a: 1 }, bgC, 3));
+  const accent2 = toHex(
+    ensureContrast(hsl((h + 38) % 360, Math.min(78, 36 + punch * 48), dark ? 68 : 38), bgC, 3),
+  );
+  const ink = (offset: number, sat: number, ld: number, ll: number, min = 4.5) =>
+    toHex(ensureContrast(hsl((h + offset) % 360, sat * punch, dark ? ld : ll), bgC, min));
   const roles: Record<RoleId, string> = {
     text: fg,
-    comment: ink(200, 10, 52, 42, 3.4),
-    doc: ink(190, 14, 64, 36, 4),
+    comment: ink(200, 12, 52, 42, 3.4),
+    doc: ink(190, 16, 64, 36, 4),
     keyword: accent,
     control: ink(18, 72, 68, 38),
-    operator: ink(200, 8, 78, 32, 4.5),
+    operator: ink(200, 10, 78, 32, 4.5),
     string: accent2,
     verbatim: ink(42, 58, 74, 36),
     char: accent2,
@@ -310,7 +317,7 @@ export function shufflePalette(appearance: Appearance): {
     property: ink(140, 22, 76, 32),
     tag: accent,
     attribute: ink(205, 55, 70, 38),
-    punctuation: ink(200, 8, 58, 46, 3.2),
+    punctuation: ink(200, 10, 58, 46, 3.2),
     preprocessor: ink(155, 40, 62, 32),
     import: accent,
     annotation: ink(300, 40, 72, 40),
@@ -325,6 +332,13 @@ export function shufflePalette(appearance: Appearance): {
     emphasis: ink(320, 36, 72, 40),
   };
   return { bg, fg, accent, accent2, roles };
+}
+
+export function shufflePalette(appearance: Appearance): GeneratedPalette {
+  const dark = isDark(appearance);
+  const hue = Math.random() * 360;
+  const seed = toHex(hsl(hue, 62 + Math.random() * 28, dark ? 58 + Math.random() * 16 : 32 + Math.random() * 12));
+  return paletteFromSeed(seed, appearance);
 }
 
 export function flipHex(input: string): string {

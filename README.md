@@ -14,7 +14,7 @@ Themes stay in the browser. Nothing is uploaded. The current theme is saved unde
 
 ## Using the studio
 
-1. Pick a starting preset, or shuffle a new palette.
+1. Pick a starting preset, set a **seed color** and generate a palette from it, or shuffle a new one. The seed becomes the accent; background, foreground, and syntax roles follow its hue. The same seed and appearance always produce the same palette.
 2. Tune the editor background, foreground, two accents, and the syntax roles. **Lift weak contrast** raises colors that fall below a readable ratio against the background.
 3. Open **Tokens** to pin individual TextMate or semantic rules, and **Colors** to pin workbench or Kate UI colors. A pin overrides the color derived from the palette. **Follow palette** (or **Clear every pin** on Export) drops those overrides.
 4. Switch the preview between a VS Code chrome mock and a Kate editor, and between a code snippet and a type specimen.
