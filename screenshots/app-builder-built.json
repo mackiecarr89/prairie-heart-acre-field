@@ -1,0 +1,38 @@
+{
+  "url": "http://127.0.0.1:8081/",
+  "viewports": {
+    "desktop": {
+      "width": 1280,
+      "height": 800,
+      "status": 200,
+      "title": "Scopewright",
+      "hasCanvas": false,
+      "bodyTextLen": 2264,
+      "bodyTextHash": "45ad510f0ec979db9b35c719a28e6f39cb291d3dd4a6f58f3b3ce7138d0f84c8",
+      "bodyTextPrefix": "Scopewright VS Code and Kate, every token and editor color 971 c",
+      "horizontalOverflow": false,
+      "consoleErrors": [],
+      "pageErrors": [],
+      "screenshot": "/workspace/screenshots/app-builder-built.png"
+    },
+    "mobile": {
+      "width": 390,
+      "height": 844,
+      "status": 200,
+      "title": "Scopewright",
+      "hasCanvas": false,
+      "bodyTextLen": 2160,
+      "bodyTextHash": "224e29bd8e07bbac2fc0c655c8a5c17a763d33fdccd58d19a8960957c7324020",
+      "bodyTextPrefix": "Scopewright VS Code and Kate, every token and editor color PREVI",
+      "horizontalOverflow": false,
+      "consoleErrors": [],
+      "pageErrors": [],
+      "screenshot": "/workspace/screenshots/app-builder-built-mobile.png"
+    }
+  },
+  "brandWarnings": [],
+  "authWarnings": [],
+  "verdictFile": "/workspace/screenshots/app-builder-built.json",
+  "divergesFromBaseline": false,
+  "baselineReasons": []
+}

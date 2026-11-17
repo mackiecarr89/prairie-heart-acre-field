@@ -1,0 +1,70 @@
+@import "tailwindcss";
+
+@theme {
+  --color-bg: #10120f;
+  --color-bg-raised: #1a1e16;
+  --color-bg-sunken: #0c0e0b;
+  --color-surface: #22281c;
+  --color-fg: #ece7d8;
+  --color-muted: #9c9788;
+  --color-faint: #6e6a5e;
+  --color-line: #31362b;
+  --color-accent: #d6f25c;
+  --color-accent-ink: #1a2208;
+  --color-danger: #e36a5d;
+  --color-warn: #e2b15a;
+  --font-sans: "Outfit", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, monospace;
+  --radius-md: 0.75rem;
+  --radius-sm: 0.5rem;
+}
+
+@layer base {
+  button:not(:disabled),
+  [role="button"]:not(:disabled) {
+    cursor: pointer;
+  }
+
+  html,
+  body {
+    background: var(--color-bg);
+    color: var(--color-fg);
+    font-family: var(--font-sans);
+  }
+
+  body {
+    min-height: 100dvh;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+  }
+}
+
+.checker {
+  background-color: var(--color-bg-sunken);
+  background-image:
+    linear-gradient(45deg, var(--color-line) 25%, transparent 25%),
+    linear-gradient(-45deg, var(--color-line) 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, var(--color-line) 75%),
+    linear-gradient(-45deg, transparent 75%, var(--color-line) 75%);
+  background-size: 8px 8px;
+  background-position: 0 0, 0 4px, 4px -4px, -4px 0;
+}
+
+.stage {
+  container-type: inline-size;
+}
+
+@container (max-width: 42rem) {
+  .stage-side {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .motion {
+    transition: none !important;
+  }
+}
